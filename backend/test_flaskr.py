@@ -38,10 +38,12 @@ class TriviaTestCase(unittest.TestCase):
         """Executed after reach test"""
         pass
 
-    """
-    TODO
-    Write at least one test for each test for successful operation and for expected errors.
-    """
+    '''
+    TEST: At this point, when you start the application
+    you should see questions and categories generated,
+    ten questions per page and pagination at the bottom of the screen for three pages.
+    Clicking on the page numbers should update the questions. 
+    '''
     def get_categories(self):
         res = self.client().get('/categories')
         data = json.loads(res.data)
@@ -68,6 +70,11 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'resourse not found')
 
+    '''
+    TEST: When you submit a question on the "Add" tab, 
+    the form will clear and the question will appear at the end of the last page
+    of the questions list in the "List" tab.  
+    '''
     def test_add_question(self):
         questions_before_addition = len(Question.query.all())
         res = self.client().post('/questions', json=self.new_question)
@@ -93,7 +100,11 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['success'], False)
         self.assertTrue(questions_after_addition == questions_before_addition)
-    
+
+    '''
+    TEST: When you click the trash icon next to a question, the question will be removed.
+    This removal will persist in the database and when you refresh the page. 
+    '''
     def test_delete_question(self):
         questions_before_delete = len(Question.query.all())
         question = Question.query.order_by(Question.id.desc()).first()
@@ -109,6 +120,11 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(questions_after_delete == questions_before_delete - 1)
         self.assertEqual(deleted_question, None)
 
+    '''
+    TEST: Search by any phrase. The questions list will update to include 
+    only question that include that string within their question. 
+    Try using the word "title" to start. 
+    ''' 
     def test_search(self):
         search_term = {'searchTerm': 'title'}
         res = self.client().post('/questions/results', json=search_term)
@@ -119,6 +135,12 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data["total_questions"])
         self.assertTrue(len(data["categories"]))
         self.assertTrue(len(data["questions"]))
+
+    '''
+    TEST: In the "List" tab / main screen, clicking on one of the 
+    categories in the left column will cause only questions of that 
+    category to be shown. 
+    '''
     
     def test_get_questions_by_category(self):
         
@@ -144,26 +166,10 @@ class TriviaTestCase(unittest.TestCase):
         }
         res = self.client().post('/quizzes', json=body)
         data = json.loads(res.data)
-        print(data.get('questions'))
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["success"], True)
         #self.assertTrue()
-        
-
-
-
-
-
-
-
-
-
-
-
-        
-
-
         
 # Make the tests conveniently executable
 if __name__ == "__main__":

@@ -26,7 +26,7 @@ def create_app(test_config=None):
   setup_db(app)
 
   #Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
-  cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+  cors = CORS(app, resources={r'/api/*': {'origins': '*'}})
 
   #Use the after_request decorator to set Access-Control-Allow
   @app.after_request
@@ -107,7 +107,7 @@ def create_app(test_config=None):
   @app.route('/questions/results', methods=['POST'])
   def search_results():
     search_term = request.get_json()['searchTerm']
-    search = "%{}%".format(search_term)
+    search = '%{}%'.format(search_term)
     questions = Question.query.filter(Question.question.ilike(search)).all()
     total_questions = len(questions)
     current_questions = paginate_questions(request, questions)
@@ -152,7 +152,7 @@ def create_app(test_config=None):
     category_id = body.get('quiz_category').get('id')
     previous_questions = body.get('previous_questions')
 
-    if category_id == 0:
+    if not category_id:
       questions = Question.query.order_by(Question.id).all()
     else:
       questions = Question.query.filter(Question.category == category_id).order_by(Question.id).all()
@@ -172,7 +172,6 @@ def create_app(test_config=None):
       'success': True,
       'question': question.format(),
     })
-
 
   #Create error handlers for all expected errors 
   @app.errorhandler(400)
